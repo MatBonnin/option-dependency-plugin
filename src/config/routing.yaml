@@ -1,0 +1,11 @@
+GriffePhotos_option_dependency_admin:
+    resource: |
+        alias: GriffePhotos.option_dependency_plugin.option_dependency
+        section: admin
+        templates: "@SyliusAdminCrud"
+        grid: GriffePhotos_option_dependency
+    type: sylius.resource
+
+GriffePhotos_option_dependency_plugin_shop:
+    resource: "@GriffePhotosOptionDependencyPlugin/Controller/ProductController.php"
+    type: annotation

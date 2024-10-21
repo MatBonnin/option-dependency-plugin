@@ -1,0 +1,32 @@
+sylius_grid:
+    grids:
+        GriffePhotos_option_dependency:
+            driver:
+                name: doctrine/orm
+                options:
+                    class: GriffePhotos\OptionDependencyPlugin\Entity\OptionDependency
+            fields:
+                id:
+                    type: string
+                    label: 'ID'
+                parentOption:
+                    type: twig
+                    label: 'Option Parent'
+                    template: '@GriffePhotosOptionDependencyPlugin/Admin/OptionDependency/Field/parentOption.html.twig'
+                parentOptionValue:
+                    type: twig
+                    label: 'Valeur de l\'Option Parent'
+                    template: '@GriffePhotosOptionDependencyPlugin/Admin/OptionDependency/Field/parentOptionValue.html.twig'
+                childOption:
+                    type: twig
+                    label: 'Option Enfant'
+                    template: '@GriffePhotosOptionDependencyPlugin/Admin/OptionDependency/Field/childOption.html.twig'
+            actions:
+                main:
+                    create:
+                        type: create
+                item:
+                    update:
+                        type: update
+                    delete:
+                        type: delete

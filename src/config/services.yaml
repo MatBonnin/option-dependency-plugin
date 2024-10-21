@@ -1,0 +1,4 @@
+services:
+    GriffePhotos\OptionDependencyPlugin\Form\Type\OptionDependencyType:
+        tags:
+            - { name: "form.type" }
