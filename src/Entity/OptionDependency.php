@@ -8,7 +8,6 @@ use Sylius\Component\Resource\Model\ResourceInterface;
 use Sylius\Component\Product\Model\ProductOptionInterface;
 use Sylius\Component\Product\Model\ProductOptionValueInterface;
 
-
 /**
  * @ORM\Entity
  * @ORM\Table(name="GriffePhotos_option_dependency")
