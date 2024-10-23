@@ -10,17 +10,17 @@ sylius_grid:
                     type: string
                     label: "ID"
                 parentOption:
-                    type: template
+                    type: twig
                     label: "Option Parent"
                     options:
                         template: "@GriffePhotosOptionDependencyPlugin/Admin/OptionDependency/Field/parentOption.html.twig"
                 parentOptionValue:
-                    type: template
+                    type: twig
                     label: "Valeur de l'Option Parent"
                     options:
                         template: "@GriffePhotosOptionDependencyPlugin/Admin/OptionDependency/Field/parentOptionValue.html.twig"
                 childOption:
-                    type: template
+                    type: twig
                     label: "Option Enfant"
                     options:
                         template: "@GriffePhotosOptionDependencyPlugin/Admin/OptionDependency/Field/childOption.html.twig"

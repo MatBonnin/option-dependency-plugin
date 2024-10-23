@@ -1,7 +1,5 @@
 <?php
 
-// src/Form/Type/OptionDependencyType.php
-
 namespace GriffePhotos\OptionDependencyPlugin\Form\Type;
 
 use GriffePhotos\OptionDependencyPlugin\Entity\OptionDependencyInterface;
@@ -22,15 +20,12 @@ class OptionDependencyType extends AbstractType
                 'choice_label' => 'name',
                 'label' => 'Option Parent',
                 'placeholder' => 'Choisissez une option parent',
-                'attr' => ['id' => 'parentOption'], // ID personnalisé
             ])
             ->add('parentOptionValue', EntityType::class, [
                 'class' => ProductOptionValue::class,
                 'choice_label' => 'value',
                 'label' => 'Valeur de l\'Option Parent',
                 'placeholder' => 'Choisissez une valeur',
-                'attr' => ['id' => 'parentOptionValue'], // ID personnalisé
-                'choices' => [], // Initialement vide, rempli par JavaScript
             ])
             ->add('childOption', EntityType::class, [
                 'class' => ProductOption::class,
