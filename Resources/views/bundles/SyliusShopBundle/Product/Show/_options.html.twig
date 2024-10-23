@@ -1,0 +1,12 @@
+{% for option_form in form.cartItem.variant %}
+    {{ form_row(option_form, { 'attr': {
+        'data-option': option_form.vars.name,
+        'data-option-type': option_form.vars.value
+    } }) }}
+{% endfor %}
+
+{% block javascripts %}
+    <script>
+       console.log('cc')
+    </script>
+{% endblock %}

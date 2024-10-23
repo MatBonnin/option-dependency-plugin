@@ -1,1 +1,29 @@
-coucou
+
+{% block javascripts %}
+<script>
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const parentOptionSelect = document.getElementById('option_dependency_parentOption');
+        const parentOptionValueSelect = document.getElementById('option_dependency_parentOptionValue');
+
+        parentOptionSelect.addEventListener('change', function () {
+            const optionId = this.value;
+
+            parentOptionValueSelect.innerHTML = '<option value="">Choisissez une valeur</option>';
+
+            if (optionId) {
+                fetch(`/admin/option-dependencies/option-values/${optionId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        data.forEach(value => {
+                            const option = document.createElement('option');
+                            option.value = value.id;
+                            option.textContent = value.value;
+                            parentOptionValueSelect.appendChild(option);
+                        });
+                    });
+            }
+        });
+    });
+</script>
+{% endblock %}

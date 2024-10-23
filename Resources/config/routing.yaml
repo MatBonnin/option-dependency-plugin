@@ -5,3 +5,6 @@ GriffePhotos_option_dependency_plugin_shop:
 griffe_photos_option_dependency_plugin_admin:
     resource: "@GriffePhotosOptionDependencyPlugin/Resources/config/routing/admin.yaml"
     prefix: /admin
+
+griffephotos_shop:
+    resource: "@GriffePhotosOptionDependencyPlugin/Resources/config/routing/shop.yaml"

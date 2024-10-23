@@ -1,0 +1,6 @@
+# src/Resources/config/routing/shop.yaml
+
+griffephotos_shop_option_dependencies:
+    path: /product/{slug}/option-dependencies
+    controller: GriffePhotos\OptionDependencyPlugin\Controller\Shop\OptionDependencyController::getOptionDependencies
+    methods: [GET]

@@ -1,0 +1,88 @@
+
+
+{% block javascripts %}
+    <script>
+document.addEventListener('DOMContentLoaded', function () {
+    fetch('{{ path('griffephotos_shop_option_dependencies', {'slug': product.slug}) }}')
+        .then(response => response.json())
+        .then(dependencies => {
+            // Construction de la map des dépendances
+            const dependenciesMap = {};
+            dependencies.forEach(dep => {
+                const key = dep.parentOption + ':' + dep.parentOptionValue;
+                if (!dependenciesMap[key]) {
+                    dependenciesMap[key] = [];
+                }
+                dependenciesMap[key].push(dep.childOption);
+            });
+
+            // Fonction pour mettre à jour les options dépendantes
+            function updateDependentOptions(changedOptionId) {
+                // Masquer toutes les options dépendantes
+                Object.values(dependenciesMap).forEach(childOptionIds => {
+                    childOptionIds.forEach(childOptionId => {
+                        const childOptionDiv = document.querySelector(`[data-option-id="${childOptionId}"]`);
+                        if (childOptionDiv) {
+                            childOptionDiv.style.display = 'none';
+                        }
+                    });
+                });
+
+                // Afficher les options enfants correspondant à la valeur sélectionnée
+                const parentSelect = document.querySelector(`[data-option-id="${changedOptionId}"] select`);
+                const selectedOption = parentSelect.querySelector('option:checked');
+                const selectedValueId = selectedOption ? selectedOption.getAttribute('data-value-id') : null;
+                const key = changedOptionId + ':' + selectedValueId;
+                const childOptionIdsToShow = dependenciesMap[key] || [];
+
+                childOptionIdsToShow.forEach(childOptionId => {
+                    const childOptionDiv = document.querySelector(`[data-option-id="${childOptionId}"]`);
+                    if (childOptionDiv) {
+                        childOptionDiv.style.display = 'block';
+                    }
+                });
+
+                // Après avoir mis à jour l'affichage des options, définir la première valeur pour les options cachées
+                const allOptionFields = document.querySelectorAll('[data-option-id]');
+                allOptionFields.forEach(field => {
+                    const selectElement = field.querySelector('select');
+                    if (field.style.display === 'none') {
+                        // Sélectionner la première option
+                        selectElement.selectedIndex = 0;
+                        // S'assurer que l'option est activée pour être soumise avec le formulaire
+                        selectElement.disabled = false;
+                    } else {
+                        // Laisser l'option activée si elle est visible
+                        selectElement.disabled = false;
+                    }
+                });
+
+                // Déclencher un événement 'change' sur toutes les options pour mettre à jour le prix
+                const allSelects = document.querySelectorAll('[data-option-id] select');
+                allSelects.forEach(select => {
+                    const event = new Event('change', { bubbles: true });
+                    select.dispatchEvent(event);
+                });
+            }
+
+            // Ajouter des écouteurs sur les options parent
+            const parentOptionIds = new Set(dependencies.map(dep => dep.parentOption));
+            parentOptionIds.forEach(parentOptionId => {
+                const parentSelect = document.querySelector(`[data-option-id="${parentOptionId}"] select`);
+                if (parentSelect) {
+                    parentSelect.addEventListener('change', function () {
+                        updateDependentOptions(parentOptionId);
+                    });
+                }
+            });
+
+            // Mise à jour initiale de l'affichage
+            parentOptionIds.forEach(parentOptionId => {
+                updateDependentOptions(parentOptionId);
+            });
+        })
+        .catch(error => console.error('Erreur lors de la récupération des dépendances d\'options :', error));
+});
+
+    </script>
+{% endblock %}

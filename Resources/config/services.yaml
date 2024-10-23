@@ -11,16 +11,28 @@ services:
                   method: addOptionDependencyMenu,
               }
 
+    GriffePhotos\OptionDependencyPlugin\Repository\OptionDependencyRepository:
+        factory: ["@doctrine.orm.entity_manager", getRepository]
+        arguments: [GriffePhotos\OptionDependencyPlugin\Entity\OptionDependency]
+
     GriffePhotos\OptionDependencyPlugin\Controller\OptionController:
         arguments:
             $productOptionValueRepository: "@sylius.repository.product_option_value"
         tags: ["controller.service_arguments"]
         public: true
 
+    GriffePhotos\OptionDependencyPlugin\Controller\Shop\OptionDependencyController:
+        arguments:
+            $optionDependencyRepository: "@griffephotos.repository.option_dependency_plugin.option_dependency"
+            $productRepository: "@sylius.repository.product"
+            $entityManager: "@doctrine.orm.entity_manager"
+            $requestStack: "@request_stack"
+        tags:
+            - { name: "controller.service_arguments" }
+        public: true # Ensure the controller service is public
 twig:
     paths:
-        "%kernel.project_dir%/custom-plugins/option-dependency-plugin/src/Resources/views": ~
-        "%kernel.project_dir%/templates/bundles/": ~
+        "%kernel.project_dir%/custom-plugins/option-dependency-plugin/src/Resources/views": GriffePhotosOptionDependencyPlugin
 
 sylius_ui:
     events:
@@ -28,4 +40,9 @@ sylius_ui:
             blocks:
                 custom_option_dependency_block:
                     template: "@GriffePhotosOptionDependencyPlugin/create.html.twig"
+                    priority: 10
+        sylius.shop.product.show.before_add_to_cart:
+            blocks:
+                custom_product_options_js:
+                    template: "@GriffePhotosOptionDependencyPlugin/Shop/Product/_option_dependencies_js.html.twig"
                     priority: 10
