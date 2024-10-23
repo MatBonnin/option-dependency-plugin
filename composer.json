@@ -1,5 +1,6 @@
 {
     "type": "sylius-plugin",
+    "name": "griffephotos/option-dependency-plugin",
     "keywords": [
         "sylius",
         "sylius-plugin"
@@ -60,8 +61,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Acme\\SyliusExamplePlugin\\": "src/",
-            "Tests\\Acme\\SyliusExamplePlugin\\": "tests/"
+        "GriffePhotos\\OptionDependencyPlugin\\": "src/"
+
         }
     },
     "autoload-dev": {

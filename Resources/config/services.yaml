@@ -1,0 +1,30 @@
+services:
+    GriffePhotos\OptionDependencyPlugin\Form\Type\OptionDependencyType:
+        tags:
+            - { name: "form.type" }
+    GriffePhotos\OptionDependencyPlugin\EventListener\AdminMenuSubscriber:
+        tags:
+            - {
+                  name: kernel.event_listener,
+                  event: sylius.menu.admin.main,
+                  method: addOptionDependencyMenu,
+              }
+
+    GriffePhotos\OptionDependencyPlugin\Controller\OptionController:
+        arguments:
+            $productOptionValueRepository: "@sylius.repository.product_option_value"
+        tags: ["controller.service_arguments"]
+        public: true
+
+twig:
+    paths:
+        "%kernel.project_dir%/custom-plugins/option-dependency-plugin/src/Resources/views": ~
+        "%kernel.project_dir%/templates/bundles/": ~
+
+sylius_ui:
+    events:
+        griffephotos.admin.option_dependency_plugin.option_dependency.create:
+            blocks:
+                custom_option_dependency_block:
+                    template: "@GriffePhotosOptionDependencyPlugin/create.html.twig"
+                    priority: 10

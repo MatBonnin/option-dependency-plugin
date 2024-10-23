@@ -1,0 +1,51 @@
+{% block javascripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Fonction pour initialiser la logique des sélections
+        function initializeOptionDependency() {
+            const parentOptionSelect = document.getElementById('option_dependency_parentOption');
+            const parentOptionValueSelect = document.getElementById('option_dependency_parentOptionValue');
+
+            if (!parentOptionSelect || !parentOptionValueSelect) {
+                console.error('Les champs parentOption ou parentOptionValue sont introuvables.');
+                return;
+            }
+
+            parentOptionSelect.addEventListener('change', function () {
+                const optionId = this.value;
+
+                parentOptionValueSelect.innerHTML = '<option value="">Choisissez une valeur</option>';
+
+                if (optionId) {
+                    fetch(`/admin/option-values/${optionId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            data.forEach(value => {
+                                const option = document.createElement('option');
+                                option.value = value.id;
+                                option.textContent = value.value;
+                                parentOptionValueSelect.appendChild(option);
+                            });
+                        });
+                }
+            });
+        }
+
+        // Utilisation de MutationObserver pour observer les changements dans le DOM
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.addedNodes.length > 0) {
+                    initializeOptionDependency();
+                }
+            });
+        });
+
+        const targetNode = document.getElementById('option_dependency'); // Le conteneur principal où le formulaire est ajouté
+        if (targetNode) {
+            observer.observe(targetNode, { childList: true, subtree: true });
+        } else {
+            console.error("Le nœud cible pour observer le formulaire est introuvable.");
+        }
+    });
+</script>
+{% endblock %}

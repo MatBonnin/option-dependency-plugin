@@ -1,0 +1,13 @@
+griffe_photos_option_dependency_plugin_admin_option_dependency:
+    resource: |
+        alias: griffephotos.option_dependency_plugin.option_dependency
+        section: admin
+        templates: '@SyliusAdmin\\Crud'
+        grid: GriffePhotos_option_dependency 
+        only: ['index', 'create', 'update', 'delete']
+    type: sylius.resource
+
+griffe_photos_option_dependency_plugin_admin_option_values:
+    path: /option-dependencies/option-values/{optionId}
+    controller: GriffePhotos\OptionDependencyPlugin\Controller\OptionController::getOptionValues
+    methods: [GET]

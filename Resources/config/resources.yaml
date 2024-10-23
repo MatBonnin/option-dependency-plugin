@@ -1,0 +1,9 @@
+sylius_resource:
+    resources:
+        griffephotos.option_dependency_plugin.option_dependency:
+            classes:
+                model: GriffePhotos\OptionDependencyPlugin\Entity\OptionDependency
+                controller: Sylius\Bundle\ResourceBundle\Controller\ResourceController
+                repository: Sylius\Bundle\ResourceBundle\Doctrine\ORM\EntityRepository
+                form: GriffePhotos\OptionDependencyPlugin\Form\Type\OptionDependencyType
+            templates: "@GriffePhotosOptionDependencyPlugin/Admin/OptionDependency"

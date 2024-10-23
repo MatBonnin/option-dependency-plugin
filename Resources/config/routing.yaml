@@ -1,0 +1,7 @@
+GriffePhotos_option_dependency_plugin_shop:
+    resource: "@GriffePhotosOptionDependencyPlugin/src/Controller/ProductController.php"
+    type: annotation
+
+griffe_photos_option_dependency_plugin_admin:
+    resource: "@GriffePhotosOptionDependencyPlugin/Resources/config/routing/admin.yaml"
+    prefix: /admin

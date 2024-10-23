@@ -1,20 +1,17 @@
 <?php
 
-declare(strict_types=1);
-
-namespace Acme\SyliusExamplePlugin\DependencyInjection;
+namespace GriffePhotos\OptionDependencyPlugin\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
-final class Configuration implements ConfigurationInterface
+class Configuration implements ConfigurationInterface
 {
-    /**
-     * @psalm-suppress UnusedVariable
-     */
-    public function getConfigTreeBuilder(): TreeBuilder
+    public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder('acme_sylius_example_plugin');
+        $treeBuilder = new TreeBuilder('griffe_photos_option_dependency_plugin');
+
+        // Define the parameters that are allowed to configure your bundle here
         $rootNode = $treeBuilder->getRootNode();
 
         return $treeBuilder;
