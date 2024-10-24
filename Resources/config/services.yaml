@@ -1,5 +1,7 @@
 services:
     GriffePhotos\OptionDependencyPlugin\Form\Type\OptionDependencyType:
+        arguments:
+            $translator: "@translator"
         tags:
             - { name: "form.type" }
 
@@ -30,6 +32,16 @@ services:
         tags:
             - { name: "controller.service_arguments" }
         public: true # Ensure the controller service is public
+
+    GriffePhotos\Validator\Constraints\ChildOptionHasDefaultValueValidator:
+        tags:
+            - { name: validator.constraint_validator }
+
+    # GriffePhotos\OptionDependencyPlugin\Validator\Constraints\ChildOptionHasDefaultValue:
+    #     arguments:
+    #         $translator: "@translator"
+    #     tags:
+    #         - { name: "validator.constraint" }
 twig:
     paths:
         "%kernel.project_dir%/custom-plugins/option-dependency-plugin/src/Resources/views": GriffePhotosOptionDependencyPlugin
@@ -39,7 +51,12 @@ sylius_ui:
         griffephotos.admin.option_dependency_plugin.option_dependency.create:
             blocks:
                 custom_option_dependency_block:
-                    template: "@GriffePhotosOptionDependencyPlugin/create.html.twig"
+                    template: "@GriffePhotosOptionDependencyPlugin/Admin/OptionDependency/create.html.twig"
+                    priority: 10
+        griffephotos.admin.option_dependency_plugin.option_dependency.update.header:
+            blocks:
+                custom_option_dependency_block:
+                    template: "@GriffePhotosOptionDependencyPlugin/Admin/OptionDependency/create.html.twig"
                     priority: 10
         sylius.shop.product.show.before_add_to_cart:
             blocks:

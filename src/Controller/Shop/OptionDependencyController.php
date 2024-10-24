@@ -37,6 +37,7 @@ class OptionDependencyController
     {
         $qb = $this->entityManager->createQueryBuilder();
 
+        // Récupérer le produit à partir de son slug et de la locale
         $qb->select('p')
             ->from(ProductInterface::class, 'p')
             ->innerJoin('p.translations', 't')
@@ -46,8 +47,6 @@ class OptionDependencyController
             ->setParameter('locale', $this->locale);
 
         $product = $qb->getQuery()->getOneOrNullResult();
-
-
 
         if (!$product) {
             return new JsonResponse(['error' => 'Produit non trouvé'], 404);
@@ -70,13 +69,22 @@ class OptionDependencyController
         // Récupérer les dépendances qui concernent ces options
         $dependencies = $this->optionDependencyRepository->findByOptions($optionIds);
 
-        // Formater les données pour le front-end
+        // Formater les données pour le front-end avec l'ID, le nom de l'option, et la valeur des OptionValue
         $data = [];
         foreach ($dependencies as $dependency) {
             $data[] = [
-                'parentOption' => $dependency->getParentOption()->getId(),
-                'parentOptionValue' => $dependency->getParentOptionValue()->getId(),
-                'childOption' => $dependency->getChildOption()->getId(),
+                'parentOption' => [
+                    'id' => $dependency->getParentOption()->getId(),
+                    'name' => $dependency->getParentOption()->getCode(), // Nom de l'option parent
+                ],
+                'parentOptionValue' => [
+                    'id' => $dependency->getParentOptionValue()->getId(),
+                    'value' => $dependency->getParentOptionValue()->getCode(), // Valeur de l'option parent
+                ],
+                'childOption' => [
+                    'id' => $dependency->getChildOption()->getId(),
+                    'name' => $dependency->getChildOption()->getCode(), // Nom de l'option enfant
+                ],
             ];
         }
 

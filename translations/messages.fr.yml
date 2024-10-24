@@ -1,0 +1,20 @@
+griffephotos:
+    ui:
+        new_option_dependency_plugin:
+            option_dependency: "Ajouter une Dépendance entre Options"
+        option_dependency_plugin:
+            option_dependencies: "Gestion des dépendances d'options"
+        edit_option_dependency_plugin:
+            option_dependency: "Modifier une dépendance d'option"
+        form:
+            parent_option_label: "Option Parent"
+            parent_option_placeholder: "Choisissez une option parent"
+            parent_option_value_label: "Valeur de l'Option Parent"
+            parent_option_value_placeholder: "Choisissez une valeur"
+            child_option_label: "Option Enfant"
+            child_option_placeholder: "Choisissez une option enfant"
+            validation:
+                parent_option_required: "Veuillez choisir une option parent."
+                parent_option_value_required: "Veuillez choisir une valeur pour l'option parent."
+                child_option_required: "Veuillez choisir une option enfant."
+                child_option_has_default_value: 'L''option enfant "{{ optionName }}" doit posséder au moins une valeur dont le code commence par "default".'

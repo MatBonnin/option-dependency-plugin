@@ -1,88 +1,101 @@
-
-
 {% block javascripts %}
     <script>
 document.addEventListener('DOMContentLoaded', function () {
     fetch('{{ path('griffephotos_shop_option_dependencies', {'slug': product.slug}) }}')
         .then(response => response.json())
         .then(dependencies => {
-            // Construction de la map des dépendances
-            const dependenciesMap = {};
-            dependencies.forEach(dep => {
-                const key = dep.parentOption + ':' + dep.parentOptionValue;
-                if (!dependenciesMap[key]) {
-                    dependenciesMap[key] = [];
-                }
-                dependenciesMap[key].push(dep.childOption);
-            });
 
-            // Fonction pour mettre à jour les options dépendantes
-            function updateDependentOptions(changedOptionId) {
-                // Masquer toutes les options dépendantes
-                Object.values(dependenciesMap).forEach(childOptionIds => {
-                    childOptionIds.forEach(childOptionId => {
-                        const childOptionDiv = document.querySelector(`[data-option-id="${childOptionId}"]`);
-                        if (childOptionDiv) {
-                            childOptionDiv.style.display = 'none';
-                        }
+            // Initialiser les selects avec les options par défaut, si disponibles
+            initializeSelectDefaults();
+
+            // Extraire tous les parentOption.name sans doublon
+            const uniqueParentOptions = [...new Set(dependencies.map(option => option.parentOption.name))];
+
+            uniqueParentOptions.forEach(parentName => {
+                const selectId = `sylius_add_to_cart_cartItem_variant_${parentName}`;
+                const selectElement = document.querySelector(`select[id^="${selectId}"]`);
+
+                if (selectElement) {
+                    selectElement.addEventListener('change', () => {
+                        handleSelectChange(selectId, dependencies);
                     });
-                });
 
-                // Afficher les options enfants correspondant à la valeur sélectionnée
-                const parentSelect = document.querySelector(`[data-option-id="${changedOptionId}"] select`);
-                const selectedOption = parentSelect.querySelector('option:checked');
-                const selectedValueId = selectedOption ? selectedOption.getAttribute('data-value-id') : null;
-                const key = changedOptionId + ':' + selectedValueId;
-                const childOptionIdsToShow = dependenciesMap[key] || [];
-
-                childOptionIdsToShow.forEach(childOptionId => {
-                    const childOptionDiv = document.querySelector(`[data-option-id="${childOptionId}"]`);
-                    if (childOptionDiv) {
-                        childOptionDiv.style.display = 'block';
-                    }
-                });
-
-                // Après avoir mis à jour l'affichage des options, définir la première valeur pour les options cachées
-                const allOptionFields = document.querySelectorAll('[data-option-id]');
-                allOptionFields.forEach(field => {
-                    const selectElement = field.querySelector('select');
-                    if (field.style.display === 'none') {
-                        // Sélectionner la première option
-                        selectElement.selectedIndex = 0;
-                        // S'assurer que l'option est activée pour être soumise avec le formulaire
-                        selectElement.disabled = false;
-                    } else {
-                        // Laisser l'option activée si elle est visible
-                        selectElement.disabled = false;
-                    }
-                });
-
-                // Déclencher un événement 'change' sur toutes les options pour mettre à jour le prix
-                const allSelects = document.querySelectorAll('[data-option-id] select');
-                allSelects.forEach(select => {
-                    const event = new Event('change', { bubbles: true });
-                    select.dispatchEvent(event);
-                });
-            }
-
-            // Ajouter des écouteurs sur les options parent
-            const parentOptionIds = new Set(dependencies.map(dep => dep.parentOption));
-            parentOptionIds.forEach(parentOptionId => {
-                const parentSelect = document.querySelector(`[data-option-id="${parentOptionId}"] select`);
-                if (parentSelect) {
-                    parentSelect.addEventListener('change', function () {
-                        updateDependentOptions(parentOptionId);
-                    });
+                    handleSelectChange(selectId, dependencies);
                 }
             });
 
-            // Mise à jour initiale de l'affichage
-            parentOptionIds.forEach(parentOptionId => {
-                updateDependentOptions(parentOptionId);
-            });
         })
         .catch(error => console.error('Erreur lors de la récupération des dépendances d\'options :', error));
 });
 
+
+// Fonction pour gérer les changements de select
+function handleSelectChange(selectId, dependencies) {
+    // Récupérer l'élément du select parent actuel
+    const parentSelect = document.getElementById(selectId);
+    if (!parentSelect) {
+        return; // Si le select n'existe pas, on arrête la fonction
+    }
+
+    // Récupérer la valeur sélectionnée dans le parent
+    const selectedValue = parentSelect.value;
+    const selectName = selectId.replace('sylius_add_to_cart_cartItem_variant_', '');
+
+    // Parcourir les options et trouver celles qui ont le parentOption.name correspondant
+    dependencies.forEach(option => {
+        if (option.parentOption.name === selectName) {
+            // Récupérer l'élément du childOption correspondant
+            const childSelect = document.getElementById(`sylius_add_to_cart_cartItem_variant_${option.childOption.name}`);
+
+            if (childSelect) {
+                // Trouver la div parent la plus proche qui contient ce select
+                const childDiv = childSelect.closest('div');
+
+                // Comparer la valeur du parentOptionValue avec la valeur sélectionnée
+                if (option.parentOptionValue.value === selectedValue) {
+                    // Afficher la div contenant le childOption
+                    if (childDiv) {
+                        childDiv.style.display = 'block';
+                    }
+                } else {
+                    // Cacher la div contenant le childOption et réinitialiser le select
+                    if (childDiv) {
+                        childDiv.style.display = 'none';
+
+                        // Essayer de sélectionner l'option par défaut si elle existe
+                        const defaultOption = Array.from(childSelect.options).find(opt => opt.value.startsWith('default_'));
+                        if (defaultOption) {
+                            childSelect.value = defaultOption.value;
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+
+// Fonction pour déplacer les options "default_" en première position dans chaque select et les sélectionner
+function initializeSelectDefaults() {
+    // Sélectionner tous les éléments select sur la page qui commencent par sylius_add_to_cart_cartItem_variant_
+    document.querySelectorAll('select[id^="sylius_add_to_cart_cartItem_variant_"]').forEach(selectElement => {
+        // Récupérer toutes les options du select
+        const options = Array.from(selectElement.options);
+
+        // Filtrer celles qui commencent par "default_" et les autres
+        const defaultOptions = options.filter(opt => opt.value.startsWith('default_'));
+        const nonDefaultOptions = options.filter(opt => !opt.value.startsWith('default_'));
+
+        // Réorganiser les options : mettre les "default_" en premier
+        selectElement.innerHTML = '';  // Vider le select
+        defaultOptions.forEach(opt => selectElement.appendChild(opt));  // Ajouter les options "default_" en premier
+        nonDefaultOptions.forEach(opt => selectElement.appendChild(opt));  // Ajouter les autres options après
+
+        // Si une option par défaut existe, la sélectionner
+        if (defaultOptions.length > 0) {
+            selectElement.value = defaultOptions[0].value;
+        }
+    });
+}
     </script>
 {% endblock %}
