@@ -1,0 +1,20 @@
+griffephotos:
+    ui:
+        new_option_dependency_plugin:
+            option_dependency: "Add an Option Dependency"
+        option_dependency_plugin:
+            option_dependencies: "Manage Option Dependencies"
+        edit_option_dependency_plugin:
+            option_dependency: "Edit an Option Dependency"
+        form:
+            parent_option_label: "Parent Option"
+            parent_option_placeholder: "Select a parent option"
+            parent_option_value_label: "Parent Option Value"
+            parent_option_value_placeholder: "Select a value"
+            child_option_label: "Child Option"
+            child_option_placeholder: "Select a child option"
+            validation:
+                parent_option_required: "Please select a parent option."
+                parent_option_value_required: "Please select a value for the parent option."
+                child_option_required: "Please select a child option."
+                child_option_has_default_value: 'The child option "{{ optionName }}" must have at least one value with a code starting with "default".'

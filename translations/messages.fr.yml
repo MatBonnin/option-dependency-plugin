@@ -7,6 +7,7 @@ griffephotos:
         edit_option_dependency_plugin:
             option_dependency: "Modifier une dépendance d'option"
         form:
+            choose_value: "Choisissez une valeur"
             parent_option_label: "Option Parent"
             parent_option_placeholder: "Choisissez une option parent"
             parent_option_value_label: "Valeur de l'Option Parent"

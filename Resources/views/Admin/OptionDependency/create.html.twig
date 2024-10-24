@@ -1,7 +1,5 @@
-
 {% block javascripts %}
 <script>
-
     document.addEventListener('DOMContentLoaded', function () {
         const parentOptionSelect = document.getElementById('option_dependency_parentOption');
         const parentOptionValueSelect = document.getElementById('option_dependency_parentOptionValue');
@@ -10,11 +8,10 @@
             handleSelectChange(this.value);
         });
 
-
         handleSelectChange(parentOptionSelect.value);
 
         function handleSelectChange(optionId) {
-            parentOptionValueSelect.innerHTML = '<option value="">Choisissez une valeur</option>';
+            parentOptionValueSelect.innerHTML = `<option value="">{{ 'griffephotos.ui.form.choose_value'|trans }}</option>`;
 
             if (optionId) {
                 fetch(`/admin/option-dependencies/option-values/${optionId}`)
@@ -28,7 +25,7 @@
                         });
                     });
             }
-    }
+        }
     });
 
     //mettre sous fomrede fonction

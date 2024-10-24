@@ -1,0 +1,43 @@
+{% block javascripts %}
+    <script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Récupérer tous les éléments du panier
+    const cartItems = document.querySelectorAll('#sylius-cart-items tbody tr');
+
+    cartItems.forEach(function (item) {
+        // Récupérer l'URL du produit et extraire le slug
+        const productLink = item.querySelector('a').getAttribute('href');
+        const slug = productLink.split('/').pop(); // Récupère le dernier élément de l'URL comme slug
+
+        // Fetch pour récupérer les dépendances basées sur le slug
+        fetch(`/product/${slug}/option-dependencies`)
+            .then(response => response.json())
+            .then(dependencies => {
+                // Appliquer les règles de dépendances pour cet item
+                const optionItems = item.querySelectorAll('.sylius-product-options .item');
+
+                optionItems.forEach(optionItem => {
+                    const optionName = optionItem.getAttribute('data-sylius-option-name');
+                    const optionValue = optionItem.textContent.trim();  // Récupérer la valeur actuelle de l'option
+
+                    // Parcourir les dépendances récupérées
+                    dependencies.forEach(dependency => {
+
+                        if (dependency.childOption.name === optionName) {
+                            // Si le nom de l'option correspond à une dépendance, appliquer la logique
+                            // Ici, on peut vérifier l'ID ou la valeur de l'option
+                            if (dependency.parentOptionValue.value !== optionValue) {
+                                optionItem.style.display = 'none'; // Cacher l'option si elle ne respecte pas la dépendance
+                            }
+                        }
+                    });
+                });
+            })
+            .catch(error => console.error('Erreur lors de la récupération des dépendances d\'options :', error));
+    });
+});
+
+
+
+    </script>
+{% endblock %}

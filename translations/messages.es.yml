@@ -1,0 +1,20 @@
+griffephotos:
+    ui:
+        new_option_dependency_plugin:
+            option_dependency: "Agregar una Dependencia de Opciones"
+        option_dependency_plugin:
+            option_dependencies: "Gestionar las Dependencias de Opciones"
+        edit_option_dependency_plugin:
+            option_dependency: "Editar una Dependencia de Opciones"
+        form:
+            parent_option_label: "Opción Principal"
+            parent_option_placeholder: "Seleccione una opción principal"
+            parent_option_value_label: "Valor de la Opción Principal"
+            parent_option_value_placeholder: "Seleccione un valor"
+            child_option_label: "Opción Secundaria"
+            child_option_placeholder: "Seleccione una opción secundaria"
+            validation:
+                parent_option_required: "Por favor, seleccione una opción principal."
+                parent_option_value_required: "Por favor, seleccione un valor para la opción principal."
+                child_option_required: "Por favor, seleccione una opción secundaria."
+                child_option_has_default_value: 'La opción secundaria "{{ optionName }}" debe tener al menos un valor con un código que comience con "default".'

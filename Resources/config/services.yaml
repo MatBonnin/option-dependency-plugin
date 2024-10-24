@@ -63,3 +63,8 @@ sylius_ui:
                 custom_product_options_js:
                     template: "@GriffePhotosOptionDependencyPlugin/Shop/Product/_option_dependencies_js.html.twig"
                     priority: 10
+        sylius.shop.cart.header:
+            blocks:
+                custom_product_options_js:
+                    template: "@GriffePhotosOptionDependencyPlugin/Shop/Order/_option_dependencies_js.html.twig"
+                    priority: 10
