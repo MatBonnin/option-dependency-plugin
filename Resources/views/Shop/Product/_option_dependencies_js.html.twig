@@ -8,8 +8,8 @@ document.addEventListener('DOMContentLoaded', function () {
             // Initialiser les selects avec les options par défaut, si disponibles
             initializeSelectDefaults();
 
-            // Extraire tous les parentOption.name sans doublon
-            const uniqueParentOptions = [...new Set(dependencies.map(option => option.parentOption.name))];
+            // Extraire tous les parentOption.code sans doublon
+            const uniqueParentOptions = [...new Set(dependencies.map(option => option.parentOption.code))];
 
             uniqueParentOptions.forEach(parentName => {
                 const selectId = `sylius_add_to_cart_cartItem_variant_${parentName}`;
@@ -41,18 +41,18 @@ function handleSelectChange(selectId, dependencies) {
     const selectedValue = parentSelect.value;
     const selectName = selectId.replace('sylius_add_to_cart_cartItem_variant_', '');
 
-    // Parcourir les options et trouver celles qui ont le parentOption.name correspondant
+    // Parcourir les options et trouver celles qui ont le parentOption.code correspondant
     dependencies.forEach(option => {
-        if (option.parentOption.name === selectName) {
+        if (option.parentOption.code === selectName) {
             // Récupérer l'élément du childOption correspondant
-            const childSelect = document.getElementById(`sylius_add_to_cart_cartItem_variant_${option.childOption.name}`);
+            const childSelect = document.getElementById(`sylius_add_to_cart_cartItem_variant_${option.childOption.code}`);
 
             if (childSelect) {
                 // Trouver la div parent la plus proche qui contient ce select
                 const childDiv = childSelect.closest('div');
 
                 // Comparer la valeur du parentOptionValue avec la valeur sélectionnée
-                if (option.parentOptionValue.value === selectedValue) {
+                if (option.parentOptionValue.code === selectedValue) {
                     // Afficher la div contenant le childOption
                     if (childDiv) {
                         childDiv.style.display = 'block';
@@ -64,6 +64,7 @@ function handleSelectChange(selectId, dependencies) {
 
                         // Essayer de sélectionner l'option par défaut si elle existe
                         const defaultOption = Array.from(childSelect.options).find(opt => opt.value.startsWith('default_'));
+
                         if (defaultOption) {
                             childSelect.value = defaultOption.value;
                         }

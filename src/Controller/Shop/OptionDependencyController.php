@@ -75,15 +75,18 @@ class OptionDependencyController
             $data[] = [
                 'parentOption' => [
                     'id' => $dependency->getParentOption()->getId(),
-                    'name' => $dependency->getParentOption()->getCode(), // Nom de l'option parent
+                    'code' => $dependency->getParentOption()->getCode(),
+                    'name' => $dependency->getParentOption()->getName(),
                 ],
                 'parentOptionValue' => [
                     'id' => $dependency->getParentOptionValue()->getId(),
-                    'value' => $dependency->getParentOptionValue()->getCode(), // Valeur de l'option parent
+                    'code' => $dependency->getParentOptionValue()->getCode(),
+                    'name' => $dependency->getParentOptionValue()->getName(),
                 ],
                 'childOption' => [
                     'id' => $dependency->getChildOption()->getId(),
-                    'name' => $dependency->getChildOption()->getCode(), // Nom de l'option enfant
+                    'code' => $dependency->getChildOption()->getCode(),
+                    'name' => $dependency->getChildOption()->getName(),
                 ],
             ];
         }
