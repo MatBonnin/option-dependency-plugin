@@ -1,122 +1,77 @@
 <p align="center">
     <a href="https://sylius.com" target="_blank">
-        <img src="https://demo.sylius.com/assets/shop/img/logo.png" />
+        <img src="https://sylius.com/wp-content/uploads/2021/03/sylius-logo_sylius-logo-dark-1024x423.jpg" />
     </a>
 </p>
 
-<h1 align="center">Plugin Skeleton</h1>
 
-<p align="center">Skeleton for starting Sylius plugins.</p>
 
-## Documentation
+# Plugin GriffePhotos Option Dependency
 
-For a comprehensive guide on Sylius Plugins development please go to Sylius documentation,
-there you will find the <a href="https://docs.sylius.com/en/latest/plugin-development-guide/index.html">Plugin Development Guide</a>, that is full of examples.
+Ce plugin ajoute la gestion des dépendances d'options pour les produits dans Sylius. Avec ce plugin, vous pouvez définir des relations conditionnelles entre les options des produits, ce qui permet d’afficher ou de masquer certaines options en fonction de choix précédents.
 
-## Quickstart Installation
+## Installation
 
-### Traditional
+Suivez ces étapes pour installer et configurer le plugin.
 
-1. Run `composer create-project sylius/plugin-skeleton ProjectName`.
+### 1. Installation du package
 
-2. From the plugin skeleton root directory, run the following commands:
+Ajoutez le package dans votre projet (modifiez la commande si le package est sur un dépôt privé) :
 
-    ```bash
-    $ (cd tests/Application && yarn install)
-    $ (cd tests/Application && yarn build)
-    $ (cd tests/Application && APP_ENV=test bin/console assets:install public)
-    
-    $ (cd tests/Application && APP_ENV=test bin/console doctrine:database:create)
-    $ (cd tests/Application && APP_ENV=test bin/console doctrine:schema:create)
-    ```
+```bash
+composer require griffephotos/option-dependency-plugin
+```
 
-To be able to set up a plugin's database, remember to configure you database credentials in `tests/Application/.env` and `tests/Application/.env.test`.
+### 2. Configurations requises
 
-### Docker
+#### **Ajout des routes**
 
-1. Execute `docker compose up -d`
+Ouvrez votre fichier `config/routes.yaml` et ajoutez la route du plugin :
 
-2. Initialize plugin `docker compose exec app make init`
+```yaml
+GriffePhotos_option_dependency_plugin:
+    resource: "@GriffePhotosOptionDependencyPlugin/Resources/config/routing.yaml"
+```
 
-3. See your browser `open localhost`
+#### **Ajout des ressources**
 
-## Usage
+Ouvrez le fichier `_sylius.yaml` (généralement situé dans `config/packages/_sylius.yaml`) et ajoutez les ressources suivantes :
 
-### Running plugin tests
+```yaml
+    - {
+          resource: "@GriffePhotosOptionDependencyPlugin/Resources/config/resources.yaml",
+      }
+    - {
+          resource: "@GriffePhotosOptionDependencyPlugin/Resources/config/grids.yaml",
+      }
+    - {
+          resource: "@GriffePhotosOptionDependencyPlugin/Resources/config/services.yaml",
+      }
+```
 
-  - PHPUnit
+#### **Enregistrement du plugin dans `bundles.php`**
 
-    ```bash
-    vendor/bin/phpunit
-    ```
+Vérifiez que le plugin est bien enregistré dans `config/bundles.php`. Si ce n'est pas le cas, ajoutez-le manuellement :
 
-  - PHPSpec
+```php
+GriffePhotos\OptionDependencyPlugin\GriffePhotosOptionDependencyPlugin::class => ['all' => true],
+```
 
-    ```bash
-    vendor/bin/phpspec run
-    ```
+### 3. Migration de la base de données
 
-  - Behat (non-JS scenarios)
+Le plugin inclut une entité pour gérer les dépendances d'options. Vous devez donc générer et exécuter les migrations pour créer la table associée dans la base de données.
 
-    ```bash
-    vendor/bin/behat --strict --tags="~@javascript"
-    ```
+Exécutez les commandes suivantes :
 
-  - Behat (JS scenarios)
- 
-    1. [Install Symfony CLI command](https://symfony.com/download).
- 
-    2. Start Headless Chrome:
-    
-      ```bash
-      google-chrome-stable --enable-automation --disable-background-networking --no-default-browser-check --no-first-run --disable-popup-blocking --disable-default-apps --allow-insecure-localhost --disable-translate --disable-extensions --no-sandbox --enable-features=Metal --headless --remote-debugging-port=9222 --window-size=2880,1800 --proxy-server='direct://' --proxy-bypass-list='*' http://127.0.0.1
-      ```
-    
-    3. Install SSL certificates (only once needed) and run test application's webserver on `127.0.0.1:8080`:
-    
-      ```bash
-      symfony server:ca:install
-      APP_ENV=test symfony server:start --port=8080 --dir=tests/Application/public --daemon
-      ```
-    
-    4. Run Behat:
-    
-      ```bash
-      vendor/bin/behat --strict --tags="@javascript"
-      ```
-    
-  - Static Analysis
-  
-    - Psalm
-    
-      ```bash
-      vendor/bin/psalm
-      ```
-      
-    - PHPStan
-    
-      ```bash
-      vendor/bin/phpstan analyse -c phpstan.neon -l max src/  
-      ```
+```bash
+php bin/console doctrine:migrations:diff
+php bin/console doctrine:migrations:migrate
+```
 
-  - Coding Standard
-  
-    ```bash
-    vendor/bin/ecs check
-    ```
+## Utilisation
 
-### Opening Sylius with your plugin
+Après l’installation, vous pouvez accéder à l'interface d'administration pour configurer les dépendances entre options. Les options sont ensuite appliquées automatiquement dans le panier et lors de l'achat en fonction des règles définies.
 
-- Using `test` environment:
+## Support
 
-    ```bash
-    (cd tests/Application && APP_ENV=test bin/console sylius:fixtures:load)
-    (cd tests/Application && APP_ENV=test bin/console server:run -d public)
-    ```
-    
-- Using `dev` environment:
-
-    ```bash
-    (cd tests/Application && APP_ENV=dev bin/console sylius:fixtures:load)
-    (cd tests/Application && APP_ENV=dev bin/console server:run -d public)
-    ```
+Pour toute question ou suggestion, n'hésitez pas à ouvrir une issue ou à contacter l'équipe de GriffePhotos.

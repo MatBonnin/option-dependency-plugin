@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             const parentOptionName = parentOptionItem.getAttribute('data-sylius-option-name');
                             const parentOptionValue = parentOptionItem.textContent.trim();
 
-                            if (parentOptionName === dependency.parentOption.name && dependency.parentOptionValue.code !== parentOptionValue) {
+                            if (parentOptionName === dependency.parentOption.name && dependency.parentOptionValue.value !== parentOptionValue) {
                                 optionItem.style.display = 'none'; // Cacher l'option si elle ne respecte pas la dépendance parentale
                             }
                         });

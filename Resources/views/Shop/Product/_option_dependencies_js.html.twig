@@ -1,102 +1,89 @@
 {% block javascripts %}
     <script>
-document.addEventListener('DOMContentLoaded', function () {
-    fetch('{{ path('griffephotos_shop_option_dependencies', {'slug': product.slug}) }}')
-        .then(response => response.json())
-        .then(dependencies => {
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('{{ path('griffephotos_shop_option_dependencies', {'slug': product.slug}) }}')
+                .then(response => response.json())
+                .then(dependencies => {
 
-            // Initialiser les selects avec les options par défaut, si disponibles
-            initializeSelectDefaults();
+                    // Initialiser les selects avec les options par défaut, si disponibles
+                    initializeSelectDefaults();
 
-            // Extraire tous les parentOption.code sans doublon
-            const uniqueParentOptions = [...new Set(dependencies.map(option => option.parentOption.code))];
-
-            uniqueParentOptions.forEach(parentName => {
-                const selectId = `sylius_add_to_cart_cartItem_variant_${parentName}`;
-                const selectElement = document.querySelector(`select[id^="${selectId}"]`);
-
-                if (selectElement) {
-                    selectElement.addEventListener('change', () => {
-                        handleSelectChange(selectId, dependencies);
+                    // Ajouter un écouteur d'événement à tous les selects qui commencent par sylius_add_to_cart_cartItem_variant_
+                    document.querySelectorAll('select[id^="sylius_add_to_cart_cartItem_variant_"]').forEach(selectElement => {
+                        selectElement.addEventListener('change', () => {
+                            handleSelectChange(dependencies);
+                        });
                     });
 
-                    handleSelectChange(selectId, dependencies);
-                }
-            });
+                    // Initialiser une première fois tous les selects
+                    handleSelectChange(dependencies);
 
-        })
-        .catch(error => console.error('Erreur lors de la récupération des dépendances d\'options :', error));
-});
+                })
+                .catch(error => console.error("Erreur lors de la récupération des dépendances d'options :", error));
+        });
 
+        // Fonction pour gérer les changements de select
+        function handleSelectChange(dependencies) {
+            // Récupérer tous les éléments select qui commencent par sylius_add_to_cart_cartItem_variant_
+            document.querySelectorAll('select[id^="sylius_add_to_cart_cartItem_variant_"]').forEach(childSelect => {
+                const selectName = childSelect.id.replace('sylius_add_to_cart_cartItem_variant_', '');
 
-// Fonction pour gérer les changements de select
-function handleSelectChange(selectId, dependencies) {
-    // Récupérer l'élément du select parent actuel
-    const parentSelect = document.getElementById(selectId);
-    if (!parentSelect) {
-        return; // Si le select n'existe pas, on arrête la fonction
-    }
+                // Vérifier si ce select a une dépendance en tant que childOption
+                dependencies.forEach(option => {
+                    if (option.childOption.code === selectName) {
+                        // Récupérer l'élément du parentOption correspondant
+                        const parentSelect = document.getElementById(`sylius_add_to_cart_cartItem_variant_${option.parentOption.code}`);
 
-    // Récupérer la valeur sélectionnée dans le parent
-    const selectedValue = parentSelect.value;
-    const selectName = selectId.replace('sylius_add_to_cart_cartItem_variant_', '');
+                        if (parentSelect) {
+                            // Trouver la div parent la plus proche qui contient ce select
+                            const childDiv = childSelect.closest('div');
 
-    // Parcourir les options et trouver celles qui ont le parentOption.code correspondant
-    dependencies.forEach(option => {
-        if (option.parentOption.code === selectName) {
-            // Récupérer l'élément du childOption correspondant
-            const childSelect = document.getElementById(`sylius_add_to_cart_cartItem_variant_${option.childOption.code}`);
+                            // Comparer la valeur du parentOption avec la valeur attendue
+                            if (parentSelect.value === option.parentOptionValue.code) {
+                                // Afficher la div contenant le childOption
+                                if (childDiv) {
+                                    childDiv.style.display = 'block';
+                                }
+                            } else {
+                                // Cacher la div contenant le childOption et réinitialiser le select
+                                if (childDiv) {
+                                    childDiv.style.display = 'none';
 
-            if (childSelect) {
-                // Trouver la div parent la plus proche qui contient ce select
-                const childDiv = childSelect.closest('div');
+                                    // Essayer de sélectionner l'option par défaut si elle existe
+                                    const defaultOption = Array.from(childSelect.options).find(opt => opt.value.startsWith('default_'));
 
-                // Comparer la valeur du parentOptionValue avec la valeur sélectionnée
-                if (option.parentOptionValue.code === selectedValue) {
-                    // Afficher la div contenant le childOption
-                    if (childDiv) {
-                        childDiv.style.display = 'block';
-                    }
-                } else {
-                    // Cacher la div contenant le childOption et réinitialiser le select
-                    if (childDiv) {
-                        childDiv.style.display = 'none';
-
-                        // Essayer de sélectionner l'option par défaut si elle existe
-                        const defaultOption = Array.from(childSelect.options).find(opt => opt.value.startsWith('default_'));
-
-                        if (defaultOption) {
-                            childSelect.value = defaultOption.value;
+                                    if (defaultOption) {
+                                        childSelect.value = defaultOption.value;
+                                    }
+                                }
+                            }
                         }
                     }
+                });
+            });
+        }
+
+        // Fonction pour déplacer les options "default_" en première position dans chaque select et les sélectionner
+        function initializeSelectDefaults() {
+            // Sélectionner tous les éléments select sur la page qui commencent par sylius_add_to_cart_cartItem_variant_
+            document.querySelectorAll('select[id^="sylius_add_to_cart_cartItem_variant_"]').forEach(selectElement => {
+                // Récupérer toutes les options du select
+                const options = Array.from(selectElement.options);
+
+                // Filtrer celles qui commencent par "default_" et les autres
+                const defaultOptions = options.filter(opt => opt.value.startsWith('default_'));
+                const nonDefaultOptions = options.filter(opt => !opt.value.startsWith('default_'));
+
+                // Réorganiser les options : mettre les "default_" en premier
+                selectElement.innerHTML = '';  // Vider le select
+                defaultOptions.forEach(opt => selectElement.appendChild(opt));  // Ajouter les options "default_" en premier
+                nonDefaultOptions.forEach(opt => selectElement.appendChild(opt));  // Ajouter les autres options après
+
+                // Si une option par défaut existe, la sélectionner
+                if (defaultOptions.length > 0) {
+                    selectElement.value = defaultOptions[0].value;
                 }
-            }
+            });
         }
-    });
-}
-
-
-// Fonction pour déplacer les options "default_" en première position dans chaque select et les sélectionner
-function initializeSelectDefaults() {
-    // Sélectionner tous les éléments select sur la page qui commencent par sylius_add_to_cart_cartItem_variant_
-    document.querySelectorAll('select[id^="sylius_add_to_cart_cartItem_variant_"]').forEach(selectElement => {
-        // Récupérer toutes les options du select
-        const options = Array.from(selectElement.options);
-
-        // Filtrer celles qui commencent par "default_" et les autres
-        const defaultOptions = options.filter(opt => opt.value.startsWith('default_'));
-        const nonDefaultOptions = options.filter(opt => !opt.value.startsWith('default_'));
-
-        // Réorganiser les options : mettre les "default_" en premier
-        selectElement.innerHTML = '';  // Vider le select
-        defaultOptions.forEach(opt => selectElement.appendChild(opt));  // Ajouter les options "default_" en premier
-        nonDefaultOptions.forEach(opt => selectElement.appendChild(opt));  // Ajouter les autres options après
-
-        // Si une option par défaut existe, la sélectionner
-        if (defaultOptions.length > 0) {
-            selectElement.value = defaultOptions[0].value;
-        }
-    });
-}
     </script>
 {% endblock %}

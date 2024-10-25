@@ -82,6 +82,7 @@ class OptionDependencyController
                     'id' => $dependency->getParentOptionValue()->getId(),
                     'code' => $dependency->getParentOptionValue()->getCode(),
                     'name' => $dependency->getParentOptionValue()->getName(),
+                    'value' => $dependency->getParentOptionValue()->getValue(),
                 ],
                 'childOption' => [
                     'id' => $dependency->getChildOption()->getId(),
